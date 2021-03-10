@@ -4,19 +4,38 @@
  */
 
 #include "mbed.h"
+#include "Servo.h"
 
 
-// Blinking rate in milliseconds
-#define BLINKING_RATE     500ms
+// Declare devices' pin
+Servo servo1(PB_1);
+Servo servo2(PA_8);
+Servo servo3(PA_11);
+
+
+//  Declare variables
+bool status = true;
 
 
 int main()
 {
-    // Initialise the digital pin LED1 as an output
-    DigitalOut led(LED1);
+    servo1 = 0;
+    servo2 = 0;
+    servo3 = 0;
 
-    while (true) {
-        led = !led;
-        ThisThread::sleep_for(BLINKING_RATE);
+    if(status){
+        //init
+        servo1 = 1;
+        ThisThread::sleep_for(300ms);
+        servo2 = 1;
+        ThisThread::sleep_for(300ms);
+        servo3 = 1;
+        ThisThread::sleep_for(300ms);
+        for(int i=0; i<5; i++){
+            servo1 = !servo1;
+            servo2 = !servo2;
+            servo3 = !servo3;
+            ThisThread::sleep_for(500ms);
+        }
     }
 }
