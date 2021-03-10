@@ -5,6 +5,7 @@
 
 #include "mbed.h"
 #include "Servo.h"
+#include <cstdio>
 
 
 // Declare devices' pin
@@ -15,7 +16,17 @@ Servo servo3(PA_11);
 
 //  Declare variables
 bool status = true;
+int time_left = 0;
+Thread t1, t2;
 
+
+void countdown(){
+    while(time_left>0){
+        printf("%d\n", time_left);
+        time_left = time_left-1;
+        ThisThread::sleep_for(1s);
+    }
+}
 
 int main()
 {
@@ -37,5 +48,12 @@ int main()
             servo3 = !servo3;
             ThisThread::sleep_for(500ms);
         }
+
+        time_left = 5;
+
+        t2.start(callback(countdown));
+        wait_us((time_left+10)*1000000);
     }
+
+    printf("done\n");
 }
