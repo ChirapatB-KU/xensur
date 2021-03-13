@@ -6,6 +6,7 @@
 #include "mbed.h"
 #include "Servo.h"
 #include <cstdio>
+#include <cstdlib>
 
 
 // Declare devices' pin
@@ -17,6 +18,7 @@ Servo servo3(PA_11);
 //  Declare variables
 bool status = true;
 int time_left = 0;
+int sel[100];
 Thread t1, t2;
 
 
@@ -38,14 +40,25 @@ void countdown(){
     }
 }
 
+void randomSel(){
+    for(int i=0; i<100; i++){
+        sel[i] = (rand()%3)+1;
+    }
+}
+
 int main()
 {
     servo1 = 0;
     servo2 = 0;
     servo3 = 0;
 
+    srand(time(0));
+
     if(status){
         //init
+
+        t1.start(callback(randomSel));
+
         servo1 = 1;
         ThisThread::sleep_for(300ms);
         servo2 = 1;
@@ -59,7 +72,7 @@ int main()
             ThisThread::sleep_for(500ms);
         }
 
-        time_left = 5;
+        time_left = 60;
 
         t2.start(callback(countdown));
         wait_us((time_left+10)*1000000);
