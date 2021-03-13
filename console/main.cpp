@@ -20,6 +20,16 @@ int time_left = 0;
 Thread t1, t2;
 
 
+void turnServo(int i, int j){
+    if(i==1){
+        servo1 = j;
+    }else if(i==2){
+        servo2 = j;
+    }else if(i==3){
+        servo3 = j;
+    }
+}
+
 void countdown(){
     while(time_left>0){
         printf("%d\n", time_left);
