@@ -18,16 +18,18 @@ Servo servo3(PA_11);
 //  Declare variables
 bool status = true;
 int time_left = 0;
-int sel[100];
+int sel[30];
 Thread t1, t2, t3;
 
 
 void countdown(){
+    printf("start countdown\n");
     while(time_left>0){
         printf("%d\n", time_left);
         time_left = time_left-1;
         ThisThread::sleep_for(1s);
     }
+    printf("DONE!\n");
 }
 
 void turnServo(int i, int j){
@@ -47,8 +49,13 @@ void hideAllServo(){
 }
 
 void randomSel(){
-    for(int i=0; i<100; i++){
+    for(int i=0; i<30; i++){
         sel[i] = (rand()%3)+1;
+        if(i>=3 && i<=11){
+            if(sel[i]==sel[i-1]){
+                sel[i] = (rand()%3)+1;
+            }
+        }
     }
 }
 
@@ -83,14 +90,16 @@ void game(){
     //time 29-5s
     hideAllServo();
     for(int j=0; j<5; j++){
-        ThisThread::sleep_for(1500ms);
+        ThisThread::sleep_for(500ms);
         turnServo(sel[i], 1);
+        ThisThread::sleep_for(1s);
         turnServo(sel[i+1], 1);
-        ThisThread::sleep_for(2s);
+        ThisThread::sleep_for(1500ms);
         turnServo(sel[i], 0);
+        ThisThread::sleep_for(1500ms);
         turnServo(sel[i+1], 0);
         i+=2;
-        ThisThread::sleep_for(1500ms);
+        ThisThread::sleep_for(500ms);
     }
 
     //time 4-0s
