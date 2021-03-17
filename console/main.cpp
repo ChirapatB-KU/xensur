@@ -22,10 +22,31 @@ int sel[30];
 Thread t1, t2, t3;
 
 
+class Score_counter{
+    public:
+        Score_counter(PinName pin) : _interrupt(pin){
+            _interrupt.rise(callback(this, &Score_counter::increment));
+        }
+
+        void increment(){
+            _score++;
+        }
+
+        int read(){
+            return _score;
+        }
+
+    private:
+        InterruptIn _interrupt;
+        volatile int _score;
+};
+
+Score_counter score_counter(PB_0);
+
 void countdown(){
     printf("start countdown\n");
     while(time_left>0){
-        printf("%d\n", time_left);
+        // printf("%d\n", time_left);
         time_left = time_left-1;
         ThisThread::sleep_for(1s);
     }
@@ -138,7 +159,13 @@ int main()
 
         t2.start(callback(countdown));
         t3.start(callback(game));
-        wait_us((time_left+10)*1000000);
+
+        while(1){
+            printf("score: %d\n", score_counter.read());
+            ThisThread::sleep_for(2s);
+        }
+
+        // wait_us((time_left+10)*1000000);
     }
 
     printf("done\n");
