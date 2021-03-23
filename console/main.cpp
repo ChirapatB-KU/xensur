@@ -13,10 +13,11 @@
 Servo servo1(PB_1);
 Servo servo2(PA_8);
 Servo servo3(PA_11);
+I2CSlave slave(D4, D5);
 
 
 //  Declare variables
-bool status = true;
+bool status = false;
 int time_left = 0;
 int sel[30];
 Thread t1, t2, t3;
@@ -111,35 +112,66 @@ void game(){
 
 int main()
 {
+    char buf[20];
+    printf("STM32 started...\n");
+    slave.address(0xA0);
+
+
     servo1 = 0;
     servo2 = 0;
     servo3 = 0;
 
     srand(time(0));
 
-    if(status){
-        //init
-        t1.start(callback(randomSel));
+    while(1){
+        int i = slave.receive();
+        for(int i=0; i<sizeof(buf); i++){
+            buf[i] = 0;
+        }
+        switch(i){
+            case I2CSlave::ReadAddressed:
+                break;
+            case I2CSlave::WriteAddressed:
+                slave.read(buf, sizeof(buf)-1);
 
-        servo1 = 1;
-        ThisThread::sleep_for(300ms);
-        servo2 = 1;
-        ThisThread::sleep_for(300ms);
-        servo3 = 1;
-        ThisThread::sleep_for(300ms);
-        for(int i=0; i<5; i++){
-            servo1 = !servo1;
-            servo2 = !servo2;
-            servo3 = !servo3;
-            ThisThread::sleep_for(500ms);
+                int num = atoi(buf);
+                printf("Read: %d\n", num);
+                if(num==1){
+                    status = true;
+                }
+                break;
         }
 
-        time_left = 60;
+        if(status){
+            //init
+            servo1 = 0;
+            servo2 = 0;
+            servo3 = 0;
 
-        t2.start(callback(countdown));
-        t3.start(callback(game));
-        wait_us((time_left+10)*1000000);
+            t1.start(callback(randomSel));
+
+            servo1 = 1;
+            ThisThread::sleep_for(300ms);
+            servo2 = 1;
+            ThisThread::sleep_for(300ms);
+            servo3 = 1;
+            ThisThread::sleep_for(300ms);
+            for(int i=0; i<5; i++){
+                servo1 = !servo1;
+                servo2 = !servo2;
+                servo3 = !servo3;
+                ThisThread::sleep_for(500ms);
+            }
+
+            time_left = 60;
+
+            t2.start(callback(countdown));
+            t3.start(callback(game));
+            wait_us((time_left+10)*1000000);
+
+            status = false;
+        }
+
+        printf("done\n");
     }
-
-    printf("done\n");
 }
