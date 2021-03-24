@@ -170,8 +170,9 @@ int main()
             wait_us((time_left+10)*1000000);
 
             status = false;
+            printf("done\n");
+
         }
 
-        printf("done\n");
     }
 }
