@@ -180,7 +180,7 @@ int main()
             servo1 = 1;
             servo2 = 1;
             servo3 = 1;
-            ThisThread::sleep_for(5000s);
+            ThisThread::sleep_for(5000ms);
             servo1 = 0;
             servo2 = 0;
             servo3 = 0;
