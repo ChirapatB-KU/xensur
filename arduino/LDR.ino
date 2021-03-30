@@ -7,17 +7,7 @@ int ldr2t = 0;
 int ldr3t = 0;
 int score = 0;
 int state = 0;
-
-void setup() {
-  // put your setup code here, to run once:
-  pinMode(ldr1,INPUT);
-  pinMode(ldr2,INPUT);
-  pinMode(ldr3,INPUT);
-
-  Serial.begin(9600);           // start serial for output
-    
-  printf("LDR started\n");
-}
+int played = 0;
 
 void receiveState(int howMany)
 {
@@ -25,6 +15,8 @@ void receiveState(int howMany)
   if(x == 1){
     score = 0;
     state = 1;
+  }else if(x == 2){
+    state = 2;
   }else{
     state = 0;
   }
@@ -36,6 +28,8 @@ void sentScore(){
 }
 
 void calibrate(){
+  delay(2000);
+
   int ldrVal1 = analogRead(ldr1);
   int ldrVal2 = analogRead(ldr2);
   int ldrVal3 = analogRead(ldr3);
@@ -43,6 +37,18 @@ void calibrate(){
   ldr1t = ldrVal1+50;
   ldr2t = ldrVal2+50;
   ldr3t = ldrVal3+50;
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(ldr1,INPUT);
+  pinMode(ldr2,INPUT);
+  pinMode(ldr3,INPUT);
+
+  Serial.begin(9600);           // start serial for output
+
+  calibrate();    
+  printf("LDR started\n");
 }
 
 void loop() {
@@ -54,8 +60,16 @@ void loop() {
   int ldrVal3 = analogRead(ldr3);
 
   if(state==1){
+      played = 1;
       if(ldrVal1>=ldr1t||ldrVal2>=ldr2t||ldrVal3>=ldr3t){
           score++;
+      }
+  }else if(state==2){
+      calibrate();
+  }else{
+      if(played==1){
+        Wire.begin(4);                // join i2c bus with address #8
+        Wire.onRequest(sentScore); // register event
       }
   }
   

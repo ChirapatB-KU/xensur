@@ -18,6 +18,7 @@ I2CSlave slave(D4, D5);
 
 //  Declare variables
 bool status = false;
+bool calibrate = false;
 int time_left = 0;
 int sel[30];
 Thread t1, t2, t3;
@@ -138,6 +139,8 @@ int main()
                 printf("Read: %d\n", num);
                 if(num==1){
                     status = true;
+                }else if(num==2){
+                    calibrate = true;
                 }
                 break;
         }
@@ -171,8 +174,17 @@ int main()
 
             status = false;
             printf("done\n");
-
         }
 
+        if(calibrate){
+            servo1 = 1;
+            servo2 = 1;
+            servo3 = 1;
+            ThisThread::sleep_for(5000s);
+            servo1 = 0;
+            servo2 = 0;
+            servo3 = 0;
+            calibrate = false;
+        }
     }
 }
