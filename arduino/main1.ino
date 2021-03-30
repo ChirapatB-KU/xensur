@@ -121,6 +121,8 @@ void screen(){
 
      
     OLED.display();
+
+    client.publish("xensurScore", "score", score);
 }
 
 void setup() {
