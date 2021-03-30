@@ -81,7 +81,13 @@ void Starting(){
 void screen(){
     Wire.begin();
     Wire.beginTransmission(4); // transmit to device #4
-    Wire.write(start);              // sends one byte 
+    Wire.write("1");              // sends one byte 
+    Wire.endTransmission();
+
+    Wire.begin();
+    Wire.beginTransmission(80); // transmit to device #
+    Wire.write("1");
+    Wire.endTransmission(); 
     OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
     OLED.setCursor(0, 0);
     OLED.setTextSize(2);
@@ -104,8 +110,9 @@ void screen(){
       var--;
       delay(1000);
     }
+    Wire.begin();
     Wire.beginTransmission(4); // transmit to device #4
-    Wire.write(stopGame);              // sends one byte
+    Wire.write("0");              // sends one byte
     Wire.endTransmission();    // stop transmitting
     OLED.clearDisplay();
     OLED.print("TIME OUT");
