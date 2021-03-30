@@ -88,10 +88,12 @@ void screen(){
     Wire.beginTransmission(80); // transmit to device #
     Wire.write("1");
     Wire.endTransmission(); 
+
     OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
     OLED.setCursor(0, 0);
     OLED.setTextSize(2);
     OLED.print("PLAY ");
+
     while(var>=0){
       OLED.setCursor(60, 0);
       OLED.println(var, DEC);
@@ -211,6 +213,33 @@ void callback(char* topic, byte* payload, unsigned int length){
     for(int i=0; i<4; i++){
       digit_timeout();  
     } 
+  }else if(payload[0]=='c'){
+    //calibrate
+    Wire.begin();
+    Wire.beginTransmission(4); // transmit to device #4
+    Wire.write("2");              // sends one byte 
+    Wire.endTransmission();
+
+    Wire.begin();
+    Wire.beginTransmission(80); // transmit to device #
+    Wire.write("2");
+    Wire.endTransmission();
+    
+    for(int i=0; i<5; i++){
+      OLED.clearDisplay();
+      OLED.setCursor(0, 0);
+
+      char calibrateText[100];
+      strcpy(calibrateText, "Calibrating ");
+      for(int j=0; j<i+1; j++){
+        strcpy(calibrateText, ".");
+      }
+      
+      OLED.print(calibrateText);
+      OLED.display();
+      delay(1000);
+    }
+    
   }
 }
 
