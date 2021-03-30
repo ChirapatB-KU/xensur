@@ -1,9 +1,20 @@
 #include "WiFi.h"
 #include "PubSubClient.h"
 #include <SPI.h>
+#include <NTPClient.h>
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+
+int second = 0;
+
+
+void callback(char* topic, byte* payload, unsigned int length){
+  
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -59,13 +70,15 @@ void setup() {
       delay(2000);
     }
   }  
-}
-
-void callback(char* topic, byte* payload, unsigned int length){
-  
+  ////////////////////////////////////////////////////////////////
+  timeClient.begin();
+  timeClient.setTimeOffset(25200);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  timeClient.update();
+  second = timeClient.getSeconds();
+  delay(1000);
 
 }
