@@ -15,10 +15,7 @@ void setup() {
   pinMode(ldr3,INPUT);
 
   Serial.begin(9600);           // start serial for output
-
-  Wire.begin(4);                // join i2c bus with address #4
-  Wire.onReceive(receiveState); // register event
-  
+    
   printf("LDR started\n");
 }
 
@@ -26,6 +23,7 @@ void receiveState(int howMany)
 {
   int x = Wire.read();    // receive byte as an integer
   if(x == 1){
+    score = 0;
     state = 1;
   }else{
     state = 0;
@@ -48,16 +46,19 @@ void calibrate(){
 }
 
 void loop() {
-    int ldrVal1 = analogRead(ldr1);
-    int ldrVal2 = analogRead(ldr2);
-    int ldrVal3 = analogRead(ldr3);
+  Wire.begin(4);                // join i2c bus with address #4
+  Wire.onReceive(receiveState); // register event
+  
+  int ldrVal1 = analogRead(ldr1);
+  int ldrVal2 = analogRead(ldr2);
+  int ldrVal3 = analogRead(ldr3);
 
-    if(state==1){
-        if(ldrVal1>=ldr1t||ldrVal2>=ldr2t||ldrVal3>=ldr3t){
-            score++;
-        }
-    }
-    
+  if(state==1){
+      if(ldrVal1>=ldr1t||ldrVal2>=ldr2t||ldrVal3>=ldr3t){
+          score++;
+      }
+  }
+  
 //     printf("%d %d %d\n", ldrVal1, ldrVal2, ldrVal3);
 //     delay(500);
 }
