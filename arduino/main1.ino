@@ -131,6 +131,11 @@ void setup() {
     Serial.println("SSD1306 allocation failed");
   }
 
+  // led on board
+  int ledPin = 2;
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+
   // connect to wifi
   const char* ssid = "xensurnetwork";
   const char* pass = "helloworld";
@@ -141,9 +146,21 @@ void setup() {
   Serial.print("Connecting to WiFi");
 
   while(WiFi.status()!=WL_CONNECTED){
-    delay(500);
+    digitalWrite(ledPin, HIGH);
+    delay(250);
+    digitalWrite(ledPin, LOW);
+    delay(250);
     Serial.print("...");
   }
+
+  //connected
+  for(int i=0; i<3; i++){
+    digitalWrite(ledPin, HIGH);
+    delay(100);
+    digitalWrite(ledPin, LOW);
+    delay(100);
+  }
+  
   Serial.println("\nConnected to the WiFi network");
   ////////////////////////////////////////////////////////////////
 
@@ -213,6 +230,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   if(!client.connected()){
     reconnect();  
+  }
+  if(WiFi.status()!=WL_CONNECTED){
+    setup();  
   }
   client.loop();
 
