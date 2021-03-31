@@ -19,18 +19,27 @@ void callback(char* topic, byte* payload, unsigned int length){
   for(int i=0; i<length; i++){
     buf = buf+(String)payload[i];
   }
-  int secondMQTT = buf.toInt();
 
-  timeClient.update();
-  second = timeClient.getSeconds();
+  if(payload[0]=='c'){
+    Wire.beginTransmission(4);
+    Wire.write("2");
+    Wire.endTransmission();
 
-  delay((secondMQTT-second)*1000);
+    delay(6*1000);
+  }else{
+    int secondMQTT = buf.toInt();
 
-  Wire.beginTransmission(4);
-  Wire.write("1");
-  Wire.endTransmission();
+    timeClient.update();
+    second = timeClient.getSeconds();
 
-  delay(60*1000);
+    delay((secondMQTT-second)*1000);
+
+    Wire.beginTransmission(4);
+    Wire.write("1");
+    Wire.endTransmission();
+
+    delay(60*1000);
+  }  
 }
 
 void setup() {
