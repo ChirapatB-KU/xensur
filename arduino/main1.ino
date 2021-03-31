@@ -25,6 +25,7 @@ int ledPins[] = {32, 33, 25, 27, 14,12};
 byte start = 1;
 byte stopGame = 0;
 int second = 0;
+char message_buff[100];
 
 void digit_timeout(){
   for (int thisLed = 0; thisLed < ledCount; thisLed++)
@@ -135,8 +136,6 @@ void screen(){
 
      
     OLED.display();
-
-    client.publish("xensurScore", "score", score);
 }
 
 void setup() {
@@ -213,7 +212,10 @@ void callback(char* topic, byte* payload, unsigned int length){
     timeClient.update();
     second = timeClient.getSeconds();
     second += 10;
-    client.publish("xensurTime", "second", second);
+
+    String pubString = String(second);
+    pubString.toCharArray(message_buff, pubString.length()+1);
+    client.publish("xensurTime", message_buff);
 
     Serial.println("ArdinoAll OLED Start Work !!!");
     digit_setup();
