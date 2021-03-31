@@ -86,7 +86,7 @@ void callback(char* topic, byte* payload, unsigned int length){
 
   if(payload[0]=='c'){
     Serial.println("start calibrate");
-    Wire.beginTransmission(4);
+    Wire.beginTransmission(80);
     Wire.write("2");
     Wire.endTransmission();
 
@@ -105,13 +105,13 @@ void callback(char* topic, byte* payload, unsigned int length){
 
     delay((secondMQTT-second)*1000);
 
-    Wire.beginTransmission(4);
+    Wire.beginTransmission(80);
     Wire.write("1");
     Wire.endTransmission();
 
     delay(60*1000);
 
-    Wire.requestFrom(4, 6);
+    Wire.requestFrom(80, 6);
     while(Wire.available()){
       char c = Wire.read();
       Serial.print(c);
