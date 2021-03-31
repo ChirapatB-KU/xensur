@@ -4,9 +4,13 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <NTPClient.h>
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 
 #define SCREEN_WIDTH 128 // pixel ความกว้าง
 #define SCREEN_HEIGHT 64 // pixel ความสูง 
@@ -20,6 +24,8 @@ const int ledCount = 6; // the number of LEDs in the bar graph
 int ledPins[] = {32, 33, 25, 27, 14,12};
 byte start = 1;
 byte stopGame = 0;
+int second = 0;
+char message_buff[100];
 
 void digit_timeout(){
   for (int thisLed = 0; thisLed < ledCount; thisLed++)
@@ -130,8 +136,6 @@ void screen(){
 
      
     OLED.display();
-
-    client.publish("xensurScore", "score", score);
 }
 
 void setup() {
@@ -205,6 +209,14 @@ void callback(char* topic, byte* payload, unsigned int length){
   Serial.println("");
 
   if(payload[0]=='s'){
+    timeClient.update();
+    second = timeClient.getSeconds();
+    second += 10;
+
+    String pubString = String(second);
+    pubString.toCharArray(message_buff, pubString.length()+1);
+    client.publish("xensurClock", message_buff);
+
     Serial.println("ArdinoAll OLED Start Work !!!");
     digit_setup();
     Starting();
@@ -215,6 +227,8 @@ void callback(char* topic, byte* payload, unsigned int length){
     } 
   }else if(payload[0]=='c'){
     //calibrate
+    client.publish("xensurClock", "c");
+
     Wire.begin();
     Wire.beginTransmission(4); // transmit to device #4
     Wire.write("2");              // sends one byte 
@@ -298,11 +312,11 @@ void reconnectWifi(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if(!client.connected()){
-    reconnect();  
-  }
   if(WiFi.status()!=WL_CONNECTED){
     reconnectWifi();  
+  }
+  if(!client.connected()){
+    reconnect();  
   }
   client.loop();
 
