@@ -29,6 +29,8 @@ void calibrate(){
     ldr1T += -8000; 
     ldr2T += -8000;
     ldr3T += -8000;
+
+    state = 0;
 }
 
 int main()
@@ -55,7 +57,9 @@ int main()
 
         if(state==1){
             //countscore
+            printf("start count score\n");
         }else if(state==2){
+            printf("start calibrate\n");
             calibrate();
         }
     }
