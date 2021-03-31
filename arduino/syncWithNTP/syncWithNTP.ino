@@ -96,13 +96,15 @@ void setup() {
   while(!client.connected()){
     Serial.println("Connecting to MQTT...");
 
-    if(client.connect("xensurTime")){
+    if(client.connect("xensurTimeRec")){
       Serial.println("connected");  
     }else{
       Serial.println("retrying...");
       delay(2000);
     }
   }  
+  client.publish("xensurStatus", "LDR ready.");
+  client.subscribe("xensurTimeRec");
   ////////////////////////////////////////////////////////////////
   timeClient.begin();
   timeClient.setTimeOffset(25200);
@@ -110,7 +112,66 @@ void setup() {
   Wire.begin();
 }
 
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    if (client.connect("xensurInput")) {
+      Serial.println("connected");
+      // Subscribe
+      client.subscribe("xensurInput");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
+
+void reconnectWifi(){
+  // led on board
+  int ledPin = 2;
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+
+  // connect to wifi
+  const char* ssid = "xensurnetwork";
+  const char* pass = "helloworld";
+
+  Serial.begin(115200);
+  WiFi.begin(ssid, pass);
+
+  Serial.print("Connecting to WiFi");
+
+  while(WiFi.status()!=WL_CONNECTED){
+    digitalWrite(ledPin, HIGH);
+    delay(250);
+    digitalWrite(ledPin, LOW);
+    delay(250);
+    Serial.print("...");
+  }
+
+  //connected
+  for(int i=0; i<3; i++){
+    digitalWrite(ledPin, HIGH);
+    delay(100);
+    digitalWrite(ledPin, LOW);
+    delay(100);
+  }
+  
+  Serial.println("\nConnected to the WiFi network");
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
-
+  if(WiFi.status()!=WL_CONNECTED){
+    reconnectWifi();  
+  }
+  if(!client.connected()){
+    reconnect();  
+  }
+  client.loop();
 }
