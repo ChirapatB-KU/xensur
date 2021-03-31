@@ -4,9 +4,13 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <NTPClient.h>
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 
 #define SCREEN_WIDTH 128 // pixel ความกว้าง
 #define SCREEN_HEIGHT 64 // pixel ความสูง 
@@ -20,6 +24,7 @@ const int ledCount = 6; // the number of LEDs in the bar graph
 int ledPins[] = {32, 33, 25, 27, 14,12};
 byte start = 1;
 byte stopGame = 0;
+int second = 0;
 
 void digit_timeout(){
   for (int thisLed = 0; thisLed < ledCount; thisLed++)
@@ -205,6 +210,11 @@ void callback(char* topic, byte* payload, unsigned int length){
   Serial.println("");
 
   if(payload[0]=='s'){
+    timeClient.update();
+    second = timeClient.getSeconds();
+    second += 10;
+    client.publish("xensurTime", "second", second);
+
     Serial.println("ArdinoAll OLED Start Work !!!");
     digit_setup();
     Starting();
@@ -215,6 +225,8 @@ void callback(char* topic, byte* payload, unsigned int length){
     } 
   }else if(payload[0]=='c'){
     //calibrate
+    client.publish("xensurTime", "c");
+
     Wire.begin();
     Wire.beginTransmission(4); // transmit to device #4
     Wire.write("2");              // sends one byte 
