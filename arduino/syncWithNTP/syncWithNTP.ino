@@ -12,6 +12,7 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
 int second = 0;
+char message_buff[100];
 
 
 void callback(char* topic, byte* payload, unsigned int length){
@@ -105,8 +106,5 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  timeClient.update();
-  second = timeClient.getSeconds();
-  delay(1000);
 
 }
