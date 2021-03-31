@@ -15,17 +15,20 @@ AnalogIn ldr3(A6);
 I2CSlave slave(D4, D5);
 
 int state = 0;
+int ldr1T = 0;
+int ldr2T = 0;
+int ldr3T = 0;
 
 void calibrate(){
     ThisThread::sleep_for(2000ms);
 
-    int ldr1Val = ldr1.read_u16();
-    int ldr2Val = ldr2.read_u16();
-    int ldr3Val = ldr3.read_u16();
+    int ldr1T = ldr1.read_u16();
+    int ldr2T = ldr2.read_u16();
+    int ldr3T = ldr3.read_u16();
 
-    ldr1Val += -8000; 
-    ldr2Val += -8000;
-    ldr3Val += -8000;
+    ldr1T += -8000; 
+    ldr2T += -8000;
+    ldr3T += -8000;
 }
 
 int main()
