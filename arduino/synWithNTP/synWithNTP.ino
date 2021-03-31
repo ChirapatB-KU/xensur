@@ -2,6 +2,8 @@
 #include "PubSubClient.h"
 #include <SPI.h>
 #include <NTPClient.h>
+#include <Wire.h>
+#include <stdlib.h>
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -13,7 +15,22 @@ int second = 0;
 
 
 void callback(char* topic, byte* payload, unsigned int length){
-  
+  String buf = "";
+  for(int i=0; i<length; i++){
+    buf = buf+(String)payload[i];
+  }
+  int secondMQTT = buf.toInt();
+
+  timeClient.update();
+  second = timeClient.getSeconds();
+
+  delay((secondMQTT-second)*1000);
+
+  Wire.beginTransmission(4);
+  Wire.write("1");
+  Wire.endTransmission();
+
+  delay(60*1000);
 }
 
 void setup() {
@@ -73,6 +90,8 @@ void setup() {
   ////////////////////////////////////////////////////////////////
   timeClient.begin();
   timeClient.setTimeOffset(25200);
+  ////////////////////////////////////////////////////////////////
+  Wire.begin();
 }
 
 void loop() {
