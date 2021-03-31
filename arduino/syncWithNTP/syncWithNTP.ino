@@ -94,11 +94,13 @@ void callback(char* topic, byte* payload, unsigned int length){
   }else{
     Serial.println("start game");
 
-    int secondMQTT = payload[0];
+    int secondMQTT = payload[0]-48;
 
     if(length==2){
-        secondMQTT = payload[0]*10+payload[1];
+        secondMQTT = (payload[0]-48)*10+(payload[1]-48);
     }
+
+    Serial.println(secondMQTT);
 
     timeClient.update();
     second = timeClient.getSeconds();
