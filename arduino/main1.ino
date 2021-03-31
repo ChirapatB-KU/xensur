@@ -298,11 +298,11 @@ void reconnectWifi(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if(!client.connected()){
-    reconnect();  
-  }
   if(WiFi.status()!=WL_CONNECTED){
     reconnectWifi();  
+  }
+  if(!client.connected()){
+    reconnect();  
   }
   client.loop();
 
