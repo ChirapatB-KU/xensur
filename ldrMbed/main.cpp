@@ -4,19 +4,19 @@
  */
 
 #include "mbed.h"
+#include <cstdio>
 
 
-// Blinking rate in milliseconds
-#define BLINKING_RATE     500ms
+// Declare
+AnalogIn ldr1(A4);
+AnalogIn ldr2(A5);
+AnalogIn ldr3(A6);
 
 
 int main()
 {
-    // Initialise the digital pin LED1 as an output
-    DigitalOut led(LED1);
-
     while (true) {
-        led = !led;
-        ThisThread::sleep_for(BLINKING_RATE);
+        printf("%d %d %d\n", ldr1.read_u16(), ldr2.read_u16(), ldr3.read_u16());
+        ThisThread::sleep_for(500ms);
     }
 }
