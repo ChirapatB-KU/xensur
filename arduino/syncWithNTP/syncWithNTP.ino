@@ -40,6 +40,12 @@ void callback(char* topic, byte* payload, unsigned int length){
     Wire.endTransmission();
 
     delay(60*1000);
+
+    Wire.requestFrom(4, 6);
+    while(Wire.available()){
+      char c = Wire.read();
+      Serial.print(c);
+    }
   }  
 }
 
