@@ -12,6 +12,8 @@ NTPClient timeClient(ntpUDP);
 
 int second = 0;
 char message_buff[100];
+bool playing = false;
+bool recieveScore = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -111,13 +113,7 @@ void callback(char* topic, byte* payload, unsigned int length){
     Wire.write("1");
     Wire.endTransmission();
 
-    delay(59*1000);
-
-    Wire.requestFrom(80, 6);
-    while(Wire.available()){
-      char c = Wire.read();
-      Serial.print(c);
-    }
+    playing = true;
   }
 }
 
@@ -184,4 +180,35 @@ void loop() {
   }
   client.loop();
 
+  Wire.requestFrom(80, 2);
+
+  while(playing){
+    String pubString = "";
+
+    if(WiFi.status()!=WL_CONNECTED){
+      reconnectWifi();  
+    }
+    if(!client.connected()){
+      reconnect();  
+    }
+    while(Wire.available()){
+      Serial.println("hello from loop wire available");
+      char c = Wire.read();
+      Serial.print(c);
+
+      pubString += String(c);
+
+      playing = false;
+      recieveScore = true;
+    }
+    delay(100);
+
+    if(recieveScore){
+      pubString.toCharArray(message_buff, pubString.length()+1);
+      client.publish("xensurResult", message_buff);
+      recieveScore = false;
+      break;
+    }
+  }
+    
 }
