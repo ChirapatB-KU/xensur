@@ -215,7 +215,7 @@ void callback(char* topic, byte* payload, unsigned int length){
 
     String pubString = String(second);
     pubString.toCharArray(message_buff, pubString.length()+1);
-    client.publish("xensurTime", message_buff);
+    client.publish("xensurClock", message_buff);
 
     Serial.println("ArdinoAll OLED Start Work !!!");
     digit_setup();
@@ -227,7 +227,7 @@ void callback(char* topic, byte* payload, unsigned int length){
     } 
   }else if(payload[0]=='c'){
     //calibrate
-    client.publish("xensurTime", "c");
+    client.publish("xensurClock", "c");
 
     Wire.begin();
     Wire.beginTransmission(4); // transmit to device #4
