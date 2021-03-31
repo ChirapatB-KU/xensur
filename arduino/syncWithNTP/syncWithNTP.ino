@@ -111,7 +111,7 @@ void callback(char* topic, byte* payload, unsigned int length){
     Wire.write("1");
     Wire.endTransmission();
 
-    delay(60*1000);
+    delay(59*1000);
 
     Wire.requestFrom(80, 6);
     while(Wire.available()){

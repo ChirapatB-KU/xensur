@@ -5,6 +5,7 @@
 
 #include "mbed.h"
 #include <cstdio>
+#include <string>
 
 
 // Declare
@@ -34,8 +35,8 @@ void scoreCounter(){
 
         ThisThread::sleep_for(10ms);
     }
-
-    state = 0;
+    printf("score : %d\n", score);
+    state = 3;
 }
 
 void calibrate(){
@@ -58,6 +59,10 @@ int main()
     printf("LDR ready...\n");
     slave.address(0xA0);
 
+    if(I2CSlave::ReadAddressed){
+        slave.write("as", 2);
+    }
+
     while (true) {
         int i = slave.receive();
         for(int i=0; i<sizeof(buf); i++){
@@ -65,13 +70,23 @@ int main()
         }
         switch(i){
             case I2CSlave::ReadAddressed:
-                break;
+                if(state==3){
+                    printf("sending\n");
+                    // string scoreS = to_string(score);
+                    // char const *message = scoreS.c_str(); 
+                    slave.write(score);
+
+                    state = 0;
+                    printf("done\n");
+                }
+                break;              
             case I2CSlave::WriteAddressed:
                 slave.read(buf, sizeof(buf)-1);
 
                 int num = atoi(buf);
                 printf("Read: %d\n", num);
                 state = num;
+                break;
         }
 
         if(state==1){
