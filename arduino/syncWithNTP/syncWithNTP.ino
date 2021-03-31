@@ -180,8 +180,6 @@ void loop() {
   }
   client.loop();
 
-  Wire.requestFrom(80, 2);
-
   while(playing){
     String pubString = "";
 
@@ -191,6 +189,8 @@ void loop() {
     if(!client.connected()){
       reconnect();  
     }
+
+    Wire.requestFrom(80, 2);
     while(Wire.available()){
       Serial.println("hello from loop wire available");
       char c = Wire.read();
