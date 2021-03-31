@@ -3,7 +3,6 @@
 #include <SPI.h>
 #include <NTPClient.h>
 #include <Wire.h>
-#include <stdlib.h>
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -14,41 +13,6 @@ NTPClient timeClient(ntpUDP);
 int second = 0;
 char message_buff[100];
 
-
-void callback(char* topic, byte* payload, unsigned int length){
-  String buf = "";
-  for(int i=0; i<length; i++){
-    buf = buf+(String)payload[i];
-  }
-
-  if(payload[0]=='c'){
-    Wire.beginTransmission(4);
-    Wire.write("2");
-    Wire.endTransmission();
-
-    delay(6*1000);
-  }else{
-    int secondMQTT = buf.toInt();
-
-    timeClient.update();
-    second = timeClient.getSeconds();
-
-    delay((secondMQTT-second)*1000);
-
-    Wire.beginTransmission(4);
-    Wire.write("1");
-    Wire.endTransmission();
-
-    delay(60*1000);
-
-    Wire.requestFrom(4, 6);
-    while(Wire.available()){
-      char c = Wire.read();
-      Serial.print(c);
-    }
-  }  
-}
-
 void setup() {
   // put your setup code here, to run once:
 
@@ -56,7 +20,7 @@ void setup() {
   int ledPin = 2;
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
-  
+
   // connect to wifi
   const char* ssid = "xensurnetwork";
   const char* pass = "helloworld";
@@ -81,7 +45,7 @@ void setup() {
     digitalWrite(ledPin, LOW);
     delay(100);
   }
-  
+
   Serial.println("\nConnected to the WiFi network");
   ////////////////////////////////////////////////////////////////
 
@@ -96,15 +60,15 @@ void setup() {
   while(!client.connected()){
     Serial.println("Connecting to MQTT...");
 
-    if(client.connect("xensurTimeRec")){
+    if(client.connect("xensurClock")){
       Serial.println("connected");  
     }else{
       Serial.println("retrying...");
       delay(2000);
     }
-  }  
-  client.publish("xensurStatus", "LDR ready.");
-  client.subscribe("xensurTimeRec");
+  }
+  client.publish("xensurStatus", "LDR ONLINE.");
+  client.subscribe("xensurClock");
   ////////////////////////////////////////////////////////////////
   timeClient.begin();
   timeClient.setTimeOffset(25200);
@@ -112,15 +76,58 @@ void setup() {
   Wire.begin();
 }
 
+void callback(char* topic, byte* payload, unsigned int length){
+  Serial.print("Message arrived in topic: ");
+  Serial.println(topic);
+
+  for(int i=0; i<length; i++){
+    Serial.print((char)payload[i]);
+  }
+
+  if(payload[0]=='c'){
+    Serial.println("start calibrate");
+    Wire.beginTransmission(4);
+    Wire.write("2");
+    Wire.endTransmission();
+
+    delay(6*1000);
+  }else{
+    Serial.println("start game");
+
+    int secondMQTT = payload[0];
+
+    if(length==2){
+        secondMQTT = payload[0]*10+payload[1];
+    }
+
+    timeClient.update();
+    second = timeClient.getSeconds();
+
+    delay((secondMQTT-second)*1000);
+
+    Wire.beginTransmission(4);
+    Wire.write("1");
+    Wire.endTransmission();
+
+    delay(60*1000);
+
+    Wire.requestFrom(4, 6);
+    while(Wire.available()){
+      char c = Wire.read();
+      Serial.print(c);
+    }
+  }
+}
+
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("xensurInput")) {
+    if (client.connect("xensurClock")) {
       Serial.println("connected");
       // Subscribe
-      client.subscribe("xensurInput");
+      client.subscribe("xensurClock");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -174,4 +181,5 @@ void loop() {
     reconnect();  
   }
   client.loop();
+
 }
