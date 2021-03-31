@@ -18,13 +18,30 @@ int state = 0;
 int ldr1T = 0;
 int ldr2T = 0;
 int ldr3T = 0;
+int score = 0;
+
+void scoreCounter(){
+    score = 0;
+
+    for(int i=0; i<6000; i++){
+        int ldrVal1 = ldr1.read_u16();
+        int ldrVal2 = ldr2.read_u16();
+        int ldrVal3 = ldr3.read_u16();
+
+        if(ldrVal1<=ldr1T||ldrVal2<=ldr2T||ldrVal3<=ldr3T){
+            score++;
+        }
+
+        ThisThread::sleep_for(10ms);
+    }
+}
 
 void calibrate(){
     ThisThread::sleep_for(2000ms);
 
-    int ldr1T = ldr1.read_u16();
-    int ldr2T = ldr2.read_u16();
-    int ldr3T = ldr3.read_u16();
+    ldr1T = ldr1.read_u16();
+    ldr2T = ldr2.read_u16();
+    ldr3T = ldr3.read_u16();
 
     ldr1T += -8000; 
     ldr2T += -8000;
@@ -58,6 +75,7 @@ int main()
         if(state==1){
             //countscore
             printf("start count score\n");
+            scoreCounter();
         }else if(state==2){
             printf("start calibrate\n");
             calibrate();
