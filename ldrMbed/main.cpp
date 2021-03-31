@@ -34,6 +34,8 @@ void scoreCounter(){
 
         ThisThread::sleep_for(10ms);
     }
+
+    state = 0;
 }
 
 void calibrate(){
@@ -78,7 +80,10 @@ int main()
             scoreCounter();
         }else if(state==2){
             printf("start calibrate\n");
+            printf("%d %d %d\n", ldr1T, ldr2T, ldr3T);
             calibrate();
+            printf("%d %d %d\n", ldr1T, ldr2T, ldr3T);
+
         }
     }
 }
