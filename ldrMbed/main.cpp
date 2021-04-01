@@ -24,6 +24,7 @@ int score = 0;
 int cursor = 0;
 std::string scoreString = "";
 
+
 void scoreCounter(){
     score = 0;
 
@@ -36,7 +37,7 @@ void scoreCounter(){
             score++;
         }
 
-        ThisThread::sleep_for(10ms);
+        ThisThread::sleep_for(10);
     }
     printf("score : %d\n", score);
 
@@ -49,7 +50,7 @@ void scoreCounter(){
 }
 
 void calibrate(){
-    ThisThread::sleep_for(2000ms);
+    ThisThread::sleep_for(2000);
 
     ldr1T = ldr1.read_u16();
     ldr2T = ldr2.read_u16();
