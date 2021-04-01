@@ -5,8 +5,6 @@
 
 #include "mbed.h"
 #include <cstdio>
-#include <sstream>
-#include <string>
 
 
 // Declare
@@ -21,8 +19,32 @@ int ldr1T = 0;
 int ldr2T = 0;
 int ldr3T = 0;
 int score = 0;
-int cursor = 0;
-std::string scoreString = "";
+int cursor = -1;
+char scoreChar[4];
+
+void int2char(int pointer, int val){
+    if(val==0){
+        scoreChar[pointer] = '0';
+    }else if(val==1){
+        scoreChar[pointer] = '1';
+    }else if(val==2){
+        scoreChar[pointer] = '2';
+    }else if(val==3){
+        scoreChar[pointer] = '3';
+    }else if(val==4){
+        scoreChar[pointer] = '4';
+    }else if(val==5){
+        scoreChar[pointer] = '5';
+    }else if(val==6){
+        scoreChar[pointer] = '6';
+    }else if(val==7){
+        scoreChar[pointer] = '7';
+    }else if(val==8){
+        scoreChar[pointer] = '8';
+    }else if(val==9){
+        scoreChar[pointer] = '9';
+    }
+}
 
 void scoreCounter(){
     score = 0;
@@ -40,11 +62,12 @@ void scoreCounter(){
     }
     printf("score : %d\n", score);
 
-    scoreString = "";
-    scoreString = std::to_string(score);
-    for(int i=scoreString.length(); i<4; i++){
-        scoreString = "0"+scoreString;
-    }    
+    for(int i=0; i<4; i++){
+        int base = score/pow(10, 3-i);
+        int val = score/base;
+        int2char(i, val);
+    }
+    cursor = 0;
     state = 3;
 }
 
@@ -68,10 +91,6 @@ int main()
     printf("LDR ready...\n");
     slave.address(0xA0);
 
-    if(I2CSlave::ReadAddressed){
-        slave.write("as", 2);
-    }
-
     while (true) {
         int i = slave.receive();
         for(int i=0; i<sizeof(buf); i++){
@@ -81,8 +100,13 @@ int main()
             case I2CSlave::ReadAddressed:
                 if(state==3){
                     printf("sending\n");
-                    slave.write(scoreString.c_str(), 4);
+                    slave.write(scoreChar[cursor]);
+                    cursor++;
                     printf("done\n");
+                    if(cursor==4){
+                        cursor = -1;
+                        state = 0;
+                    }
                 }
                 break;              
             case I2CSlave::WriteAddressed:
@@ -91,6 +115,7 @@ int main()
                 int num = atoi(buf);
                 printf("Read: %d\n", num);
                 state = num;
+                cursor = -1;
                 break;
         }
 
