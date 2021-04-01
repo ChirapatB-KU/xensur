@@ -95,6 +95,8 @@ void screen(){
     Wire.write("1");
     Wire.endTransmission(); 
 
+    delay(3400);
+
     OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
     OLED.setCursor(0, 0);
     OLED.setTextSize(2);
