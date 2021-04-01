@@ -14,6 +14,7 @@ int second = 0;
 char message_buff[100];
 bool playing = false;
 bool recieveScore = false;
+String pubString = "";
 
 void setup() {
   // put your setup code here, to run once:
@@ -180,8 +181,21 @@ void loop() {
   }
   client.loop();
 
+  if(recieveScore){
+//      Serial.println(pubString);
+      if(WiFi.status()!=WL_CONNECTED){
+        reconnectWifi();  
+      }
+      if(!client.connected()){
+        reconnect();  
+      }
+      pubString.toCharArray(message_buff, pubString.length()+1);
+      client.publish("xensurResult", message_buff);
+      recieveScore = false;
+  }
+
   while(playing){
-    String pubString = "";
+    
 
     if(WiFi.status()!=WL_CONNECTED){
       reconnectWifi();  
@@ -190,25 +204,23 @@ void loop() {
       reconnect();  
     }
 
-    Wire.requestFrom(80, 2);
+    Wire.requestFrom(80, 4);
+
+    int cursor = 0;
     while(Wire.available()){
       Serial.println("hello from loop wire available");
       char c = Wire.read();
       Serial.print(c);
 
       pubString += String(c);
+      cursor++;
 
-      playing = false;
-      recieveScore = true;
+      if(cursor==4){
+        playing = false;
+        recieveScore = true; 
+      }
     }
     delay(100);
-
-    if(recieveScore){
-      pubString.toCharArray(message_buff, pubString.length()+1);
-      client.publish("xensurResult", message_buff);
-      recieveScore = false;
-      break;
-    }
   }
     
 }
