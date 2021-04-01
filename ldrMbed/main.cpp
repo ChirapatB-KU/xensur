@@ -5,6 +5,7 @@
 
 #include "mbed.h"
 #include <cstdio>
+#include <sstream>
 #include <string>
 
 
@@ -20,6 +21,8 @@ int ldr1T = 0;
 int ldr2T = 0;
 int ldr3T = 0;
 int score = 0;
+int cursor = 0;
+std::string scoreString = "";
 
 void scoreCounter(){
     score = 0;
@@ -36,6 +39,12 @@ void scoreCounter(){
         ThisThread::sleep_for(10ms);
     }
     printf("score : %d\n", score);
+
+    scoreString = "";
+    scoreString = std::to_string(score);
+    for(int i=scoreString.length(); i<4; i++){
+        scoreString = "0"+scoreString;
+    }    
     state = 3;
 }
 
@@ -72,11 +81,7 @@ int main()
             case I2CSlave::ReadAddressed:
                 if(state==3){
                     printf("sending\n");
-                    // string scoreS = to_string(score);
-                    // char const *message = scoreS.c_str(); 
-                    slave.write(score);
-
-                    state = 0;
+                    slave.write(scoreString.c_str(), 4);
                     printf("done\n");
                 }
                 break;              
@@ -98,7 +103,6 @@ int main()
             printf("%d %d %d\n", ldr1T, ldr2T, ldr3T);
             calibrate();
             printf("%d %d %d\n", ldr1T, ldr2T, ldr3T);
-
         }
     }
 }
