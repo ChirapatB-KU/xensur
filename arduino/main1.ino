@@ -79,7 +79,7 @@ void Starting(){
     OLED.setTextSize(1);
     OLED.print("starting...");
     OLED.display();
-    delay(7000);
+    delay(3000);
     
     //Wire.endTransmission();    // stop transmitting
 }
@@ -94,6 +94,8 @@ void screen(){
     Wire.beginTransmission(80); // transmit to device #
     Wire.write("1");
     Wire.endTransmission(); 
+
+    delay(3400);
 
     OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
     OLED.setCursor(0, 0);
@@ -217,6 +219,7 @@ void callback(char* topic, byte* payload, unsigned int length){
     pubString.toCharArray(message_buff, pubString.length()+1);
     client.publish("xensurClock", message_buff);
 
+    delay(3100);
     Serial.println("ArdinoAll OLED Start Work !!!");
     digit_setup();
     Starting();

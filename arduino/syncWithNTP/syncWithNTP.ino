@@ -12,6 +12,9 @@ NTPClient timeClient(ntpUDP);
 
 int second = 0;
 char message_buff[100];
+bool playing = false;
+bool recieveScore = false;
+String pubString = "";
 
 void setup() {
   // put your setup code here, to run once:
@@ -94,11 +97,13 @@ void callback(char* topic, byte* payload, unsigned int length){
   }else{
     Serial.println("start game");
 
-    int secondMQTT = payload[0];
+    int secondMQTT = payload[0]-48;
 
     if(length==2){
-        secondMQTT = payload[0]*10+payload[1];
+        secondMQTT = (payload[0]-48)*10+(payload[1]-48);
     }
+
+    Serial.println(secondMQTT);
 
     timeClient.update();
     second = timeClient.getSeconds();
@@ -109,13 +114,7 @@ void callback(char* topic, byte* payload, unsigned int length){
     Wire.write("1");
     Wire.endTransmission();
 
-    delay(60*1000);
-
-    Wire.requestFrom(80, 6);
-    while(Wire.available()){
-      char c = Wire.read();
-      Serial.print(c);
-    }
+    playing = true;
   }
 }
 
@@ -182,4 +181,46 @@ void loop() {
   }
   client.loop();
 
+  if(recieveScore){
+//      Serial.println(pubString);
+      if(WiFi.status()!=WL_CONNECTED){
+        reconnectWifi();  
+      }
+      if(!client.connected()){
+        reconnect();  
+      }
+      pubString.toCharArray(message_buff, pubString.length()+1);
+      client.publish("xensurResult", message_buff);
+      recieveScore = false;
+  }
+
+  while(playing){
+    
+
+    if(WiFi.status()!=WL_CONNECTED){
+      reconnectWifi();  
+    }
+    if(!client.connected()){
+      reconnect();  
+    }
+
+    Wire.requestFrom(80, 4);
+
+    int cursor = 0;
+    while(Wire.available()){
+      Serial.println("hello from loop wire available");
+      char c = Wire.read();
+      Serial.print(c);
+
+      pubString += String(c);
+      cursor++;
+
+      if(cursor==4){
+        playing = false;
+        recieveScore = true; 
+      }
+    }
+    delay(100);
+  }
+    
 }
