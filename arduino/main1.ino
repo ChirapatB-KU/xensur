@@ -77,7 +77,7 @@ void Starting(){
     OLED.print("xenSur");
     OLED.setCursor(0, 20);
     OLED.setTextSize(1);
-    OLED.print("starting...");
+    OLED.print("preparing...");
     OLED.display();
     delay(3000);
     
@@ -128,15 +128,23 @@ void screen(){
     OLED.print("TIME OUT");
     OLED.display();
     delay(4000);
-    Wire.begin();        // join i2c bus (address optional for master)
-    Wire.requestFrom(4, 6);    // request 6 bytes from slave device #4
     int score = Wire.read(); // receive bytes
     OLED.clearDisplay();
     OLED.setCursor(0, 0);
-    OLED.print("Your Score");
-    OLED.println(score, DEC);
+    OLED.print("Uploading");
+    OLED.setCursor(0, 20);
+    OLED.print("SCORE...");
+    OLED.display();
+    delay(2000);
 
-     
+    OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
+    OLED.setTextColor(WHITE, BLACK);  //กำหนดข้อความสีขาว ฉากหลังสีดำ
+    OLED.setCursor(0, 0); // กำหนดตำแหน่ง x,y ที่จะแสดงผล
+    OLED.setTextSize(2); // กำหนดขนาดตัวอักษร
+    OLED.print("xenSur");
+    OLED.setCursor(0, 20);
+    OLED.setTextSize(1);
+    OLED.print("Ready!!!   ");
     OLED.display();
 }
 
@@ -145,6 +153,16 @@ void setup() {
   if (!OLED.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // สั่งให้จอ OLED เริ่มทำงานที่ Address 0x3C
     Serial.println("SSD1306 allocation failed");
   }
+
+  OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
+  OLED.setTextColor(WHITE, BLACK);  //กำหนดข้อความสีขาว ฉากหลังสีดำ
+  OLED.setCursor(0, 0); // กำหนดตำแหน่ง x,y ที่จะแสดงผล
+  OLED.setTextSize(2); // กำหนดขนาดตัวอักษร
+  OLED.print("xenSur");
+  OLED.setCursor(0, 20);
+  OLED.setTextSize(1);
+  OLED.print("starting...");
+  OLED.display();
 
   // led on board
   int ledPin = 2;
@@ -199,6 +217,12 @@ void setup() {
   }
   client.publish("xensurStatus", "device ONLINE.");
   client.subscribe("xensurInput");
+  ////////////////////////////////////////////////////////////////
+  OLED.setTextColor(WHITE, BLACK);  //กำหนดข้อความสีขาว ฉากหลังสีดำ
+  OLED.setCursor(0, 20); // กำหนดตำแหน่ง x,y ที่จะแสดงผล
+  OLED.setTextSize(1); // กำหนดขนาดตัวอักษร      
+  OLED.print("Ready!!!   ");
+  OLED.display();
 }
 
 void callback(char* topic, byte* payload, unsigned int length){
@@ -242,21 +266,36 @@ void callback(char* topic, byte* payload, unsigned int length){
     Wire.write("2");
     Wire.endTransmission();
     
-    for(int i=0; i<5; i++){
-      OLED.clearDisplay();
-      OLED.setCursor(0, 0);
 
-      char calibrateText[100];
-      strcpy(calibrateText, "Calibrating ");
-      for(int j=0; j<i+1; j++){
-        strcpy(calibrateText, ".");
-      }
-      
-      OLED.print(calibrateText);
+    OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
+    OLED.setTextColor(WHITE, BLACK);  //กำหนดข้อความสีขาว ฉากหลังสีดำ
+    OLED.setCursor(0, 0); // กำหนดตำแหน่ง x,y ที่จะแสดงผล
+    OLED.setTextSize(2); // กำหนดขนาดตัวอักษร      
+    OLED.print("Calibrate");
+    OLED.display();
+    
+    for(int i=0; i<60; i++){
+      OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
+      OLED.setTextColor(WHITE, BLACK);  //กำหนดข้อความสีขาว ฉากหลังสีดำ
+      OLED.setCursor(0, 0); // กำหนดตำแหน่ง x,y ที่จะแสดงผล
+      OLED.setTextSize(2); // กำหนดขนาดตัวอักษร      
+      OLED.print("Calibrate");
+      OLED.setCursor(i, 20);
+      OLED.setTextSize(1);
+      OLED.print("...");
       OLED.display();
-      delay(1000);
+      delay(100);
     }
     
+    OLED.clearDisplay(); // ลบภาพในหน้าจอทั้งหมด
+    OLED.setTextColor(WHITE, BLACK);  //กำหนดข้อความสีขาว ฉากหลังสีดำ
+    OLED.setCursor(0, 0); // กำหนดตำแหน่ง x,y ที่จะแสดงผล
+    OLED.setTextSize(2); // กำหนดขนาดตัวอักษร
+    OLED.print("xenSur");
+    OLED.setCursor(0, 20); // กำหนดตำแหน่ง x,y ที่จะแสดงผล
+    OLED.setTextSize(1); // กำหนดขนาดตัวอักษร      
+    OLED.print("Ready!!!   ");
+    OLED.display();
   }
 }
 
