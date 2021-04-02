@@ -114,6 +114,8 @@ void callback(char* topic, byte* payload, unsigned int length){
     Wire.write("1");
     Wire.endTransmission();
 
+    delay(61000);
+
     playing = true;
   }
 }
