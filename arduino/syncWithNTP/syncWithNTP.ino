@@ -197,15 +197,6 @@ void loop() {
   }
 
   while(playing){
-    
-
-    if(WiFi.status()!=WL_CONNECTED){
-      reconnectWifi();  
-    }
-    if(!client.connected()){
-      reconnect();  
-    }
-
     Wire.requestFrom(80, 4);
 
     int cursor = 0;
@@ -220,6 +211,8 @@ void loop() {
       if(cursor==4){
         playing = false;
         recieveScore = true; 
+
+        break;
       }
     }
     delay(100);

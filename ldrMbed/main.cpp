@@ -69,10 +69,6 @@ int main()
     printf("LDR ready...\n");
     slave.address(0xA0);
 
-    if(I2CSlave::ReadAddressed){
-        slave.write("as", 2);
-    }
-
     while (true) {
         int i = slave.receive();
         for(int i=0; i<sizeof(buf); i++){
@@ -84,6 +80,8 @@ int main()
                     printf("sending\n");
                     slave.write(scoreString.c_str(), 4);
                     printf("done\n");
+                    state = 0;
+                    ThisThread::sleep_for(1000);
                 }
                 break;              
             case I2CSlave::WriteAddressed:
@@ -99,6 +97,7 @@ int main()
             //countscore
             printf("start count score\n");
             scoreCounter();
+            state = 3;
         }else if(state==2){
             printf("start calibrate\n");
             printf("%d %d %d\n", ldr1T, ldr2T, ldr3T);
