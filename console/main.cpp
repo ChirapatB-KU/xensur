@@ -21,7 +21,6 @@ bool status = false;
 bool calibrate = false;
 int time_left = 0;
 int sel[30];
-Thread t1, t2, t3;
 
 
 void countdown(){
@@ -151,7 +150,7 @@ int main()
             servo2 = 0;
             servo3 = 0;
 
-            t1.start(callback(randomSel));
+            randomSel();
 
             servo1 = 1;
             ThisThread::sleep_for(300ms);
@@ -168,9 +167,7 @@ int main()
 
             time_left = 60;
 
-            t2.start(callback(countdown));
-            t3.start(callback(game));
-            wait_us((time_left+10)*1000000);
+            game();
 
             status = false;
             printf("done\n");
