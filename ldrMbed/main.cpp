@@ -10,7 +10,7 @@
 
 
 // Declare
-AnalogIn ldr1(A4);
+AnalogIn ldr1(A2);
 AnalogIn ldr2(A5);
 AnalogIn ldr3(A6);
 
