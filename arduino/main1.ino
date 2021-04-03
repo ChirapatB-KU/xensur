@@ -254,7 +254,13 @@ void callback(char* topic, byte* payload, unsigned int length){
     } 
   }else if(payload[0]=='c'){
     //calibrate
-    client.publish("xensurClock", "c");
+    timeClient.update();
+    second = timeClient.getSeconds();
+    second += 10;
+
+    String pubString = "c"+String(second);
+    pubString.toCharArray(message_buff, pubString.length()+1);
+    client.publish("xensurClock", message_buff);
 
     Wire.begin();
     Wire.beginTransmission(4); // transmit to device #4

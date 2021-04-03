@@ -89,6 +89,14 @@ void callback(char* topic, byte* payload, unsigned int length){
 
   if(payload[0]=='c'){
     Serial.println("start calibrate");
+
+    secondMQTT = (payload[1]-48)*10+(payload[2]-48);
+
+    timeClient.update();
+    second = timeClient.getSeconds();
+
+    delay((secondMQTT-second)*1000);
+
     Wire.beginTransmission(80);
     Wire.write("2");
     Wire.endTransmission();
