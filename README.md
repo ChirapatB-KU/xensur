@@ -17,9 +17,8 @@ Computer Engineering , Kasetsart University <br />
 ภาคปลาย ปีการศึกษา 2563 หมู่ 1 <br />
 <br />
 File project: <br />
-IdrMbed/main --> LDR code <br />
-Console/servo --> SERVO code <br />
-arduino/ --> LDR,10-digitLED bargraph, OLED code <br />
-arduino/connectivity --> connect oled + servo <br />
-arduino/syncWithNTP/ --> sync time server for NodeMCU-32S <br />
+IdrMbed/ --> LDR code <br />
+Console/ --> SERVO code <br />
+arduino/main1.ino --> main NodeMCU-32S with OLED, LED and Servo slave<br />
+arduino/syncWithNTP/ --> NodeMCU-32S with LDR slave<br />
 
