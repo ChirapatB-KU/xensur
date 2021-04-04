@@ -12,15 +12,14 @@ created and developed by<br/>
   * <a href="https://github.com/Mamacupmusap">Mamacupmusap (6110506401 นางสาวชญานิศ ตั้งภาธร )</a>
 
 
-
-Computer Engineering , Kasetsart University 
-01204322 Embedded Systems 
-ภาคปลาย ปีการศึกษา 2563 หมู่ 1
-
-File project:
-IdrMbed/main --> LDR code
-Console/servo --> SERVO code
-arduino/ --> LDR,10-digitLED bargraph, OLED code
-arduino/connectivity --> connect oled + servo
-arduino/syncWithNTP/ --> sync time server for NodeMCU-32S
+Computer Engineering , Kasetsart University <br />
+01204322 Embedded Systems <br />
+ภาคปลาย ปีการศึกษา 2563 หมู่ 1 <br />
+<br />
+File project: <br />
+IdrMbed/main --> LDR code <br />
+Console/servo --> SERVO code <br />
+arduino/ --> LDR,10-digitLED bargraph, OLED code <br />
+arduino/connectivity --> connect oled + servo <br />
+arduino/syncWithNTP/ --> sync time server for NodeMCU-32S <br />
 
