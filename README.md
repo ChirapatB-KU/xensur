@@ -20,5 +20,5 @@ File project: <br />
 IdrMbed/ --> LDR code <br />
 Console/ --> SERVO code <br />
 arduino/main1.ino --> main NodeMCU-32S with OLED, LED and Servo slave<br />
-arduino/syncWithNTP/ --> NodeMCU-32S with LDR slave<br />
+arduino/master_ldr.ino --> NodeMCU-32S with LDR slave<br />
 
